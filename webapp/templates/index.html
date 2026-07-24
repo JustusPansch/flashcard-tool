@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - script2anki{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<section class="stats">
+  <div class="stat"><span class="stat-num">{{ due }}</span><span class="stat-label">due now</span></div>
+  <div class="stat"><span class="stat-num">{{ total_active }}</span><span class="stat-label">in filter</span></div>
+  <div class="stat"><span class="stat-num">{{ states.get('new', 0) }}</span><span class="stat-label">new</span></div>
+  <div class="stat"><span class="stat-num">{{ states.get('learning', 0) }}</span><span class="stat-label">learning</span></div>
+  <div class="stat"><span class="stat-num">{{ states.get('review', 0) }}</span><span class="stat-label">review</span></div>
+  <div class="stat"><span class="stat-num">{{ disabled }}</span><span class="stat-label">disabled</span></div>
+</section>
+
+<a class="btn btn-primary btn-lg" href="{{ url_for('study') }}">Study now</a>
+{% if disabled %}
+  <p class="muted">{{ disabled }} card(s) disabled -- <a href="{{ url_for('browse') }}">re-enable in Browse</a>.</p>
+{% endif %}
+
+<h2>What do you want to study?</h2>
+<p class="muted">This filter controls both the study queue and the export default selection.</p>
+<form method="post" action="{{ url_for('settings') }}">
+  <div class="type-grid">
+  {% for t in types %}
+    <label class="type-check">
+      <input type="checkbox" name="types" value="{{ t }}" {% if t in active %}checked{% endif %}>
+      {{ t }} <span class="muted">({{ counts.get(t, 0) }})</span>
+    </label>
+  {% endfor %}
+  {% if not types %}
+    <p class="muted">No cards imported yet -- run <code>script2anki.py import</code> first.</p>
+  {% endif %}
+  </div>
+  {% if types %}<button type="submit" class="btn">Save filter</button>{% endif %}
+</form>
+{% endblock %}

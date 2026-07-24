@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}script2anki{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav class="topnav">
+  <a class="brand" href="{{ url_for('index') }}">script2anki</a>
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <a href="{{ url_for('study') }}">Study</a>
+  <a href="{{ url_for('browse') }}">Browse</a>
+  <a href="{{ url_for('export') }}">Export</a>
+  <form method="post" action="{{ url_for('set_language') }}" class="lang-toggle">
+    {% for l in languages %}
+      <button type="submit" name="language" value="{{ l }}" class="{{ 'active' if l == language else '' }}">{{ l|upper }}</button>
+    {% endfor %}
+  </form>
+</nav>
+<main>
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

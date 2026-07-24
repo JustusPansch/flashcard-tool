@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Study - script2anki{% endblock %}
+{% block content %}
+{% if card %}
+  <p class="muted">{{ remaining }} card(s) due in your current filter</p>
+  <div class="study-card">
+    <div class="study-card-header">
+      <div class="badge">{{ card['type'] }}{% if card['number'] %} {{ card['number'] }}{% endif %}</div>
+      <form method="post" action="{{ url_for('card_enabled', card_id=card['id']) }}">
+        <input type="hidden" name="enabled" value="0">
+        <button type="submit" class="btn btn-disable" title="Remove this card from the study rotation">Disable card</button>
+      </form>
+    </div>
+    <div class="context-line">
+      {% if context.chapter_title %}Ch. {{ context.chapter_number }} ({{ context.chapter_title }}){% endif %}
+      {% if context.section_title %} &middot; §{{ context.section_number }} ({{ context.section_title }}){% endif %}
+    </div>
+    <p class="question">{{ question }}</p>
+    <div id="answer" class="answer hidden">
+      <img src="{{ url_for('assets', filename=card['image_filename']) }}" alt="answer">
+    </div>
+    <button id="show-btn" class="btn btn-primary" onclick="showAnswer()">Show answer (space)</button>
+    <form id="grade-form" method="post" action="{{ url_for('study_grade') }}" class="grade-buttons hidden">
+      <input type="hidden" name="card_id" value="{{ card['id'] }}">
+      <button type="submit" name="rating" value="again" class="btn btn-again">Again (1)</button>
+      <button type="submit" name="rating" value="hard" class="btn btn-hard">Hard (2)</button>
+      <button type="submit" name="rating" value="good" class="btn btn-good">Good (3)</button>
+      <button type="submit" name="rating" value="easy" class="btn btn-easy">Easy (4)</button>
+    </form>
+  </div>
+  <script>
+    function showAnswer() {
+      document.getElementById('answer').classList.remove('hidden');
+      document.getElementById('show-btn').classList.add('hidden');
+      document.getElementById('grade-form').classList.remove('hidden');
+    }
+    document.addEventListener('keydown', function (e) {
+      const answerShown = !document.getElementById('answer').classList.contains('hidden');
+      if (!answerShown && (e.key === ' ' || e.key === 'Enter')) {
+        e.preventDefault();
+        showAnswer();
+        return;
+      }
+      if (answerShown) {
+        const map = {'1': 'again', '2': 'hard', '3': 'good', '4': 'easy'};
+        if (map[e.key]) {
+          e.preventDefault();
+          document.querySelector('#grade-form button[value="' + map[e.key] + '"]').click();
+        }
+      }
+    });
+  </script>
+{% else %}
+  <div class="empty-state">
+    <h2>All caught up</h2>
+    <p>No cards are due right now within your current filter.</p>
+    <a class="btn" href="{{ url_for('index') }}">Back to dashboard</a>
+  </div>
+{% endif %}
+{% endblock %}

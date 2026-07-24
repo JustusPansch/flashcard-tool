@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Generated per-import artifacts (screenshots crop the source PDF's
+# copyrighted content, and the DB/debug dump are personal study data --
+# neither belongs in version control)
+assets/
+flashcards.db
+debug.json
+*.apkg
+
+# Source PDFs (copyrighted lecture material, not project source)
+*.pdf
+
+# Claude Code session state
+.claude/
+
+# Editor/OS cruft
+.DS_Store

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Browse - script2anki{% endblock %}
+{% block content %}
+<h1>Browse</h1>
+<form method="get" class="type-filter-form">
+  <div class="type-grid">
+  {% for t in types %}
+    <label class="type-check">
+      <input type="checkbox" name="types" value="{{ t }}" {% if t in filter_types %}checked{% endif %}>
+      {{ t }}
+    </label>
+  {% endfor %}
+  </div>
+  <button type="submit" class="btn">Filter</button>
+</form>
+
+<div class="table-wrap">
+<table class="card-table">
+  <thead>
+    <tr><th>Type</th><th>Number</th><th>Chapter</th><th>Section</th><th>Question</th><th>State</th><th>Due</th><th></th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for row in rows %}
+    {% set c = row.card %}
+    <tr class="{{ 'disabled-row' if not c['enabled'] }}">
+      <td>{{ c['type'] }}</td>
+      <td>{{ c['number'] or '—' }}</td>
+      <td>{{ c['chapter_title'] or '—' }}</td>
+      <td>{{ c['section_title'] or '—' }}</td>
+      <td>{{ row.question }}</td>
+      <td>{{ 'disabled' if not c['enabled'] else c['state'] }}</td>
+      <td>{{ c['due_at'][:10] }}</td>
+      <td><a href="{{ url_for('assets', filename=c['image_filename']) }}" target="_blank">view</a></td>
+      <td>
+        <form method="post" action="{{ url_for('card_enabled', card_id=c['id']) }}">
+          {% if c['enabled'] %}
+            <input type="hidden" name="enabled" value="0">
+            <button type="submit" class="btn-link">disable</button>
+          {% else %}
+            <input type="hidden" name="enabled" value="1">
+            <button type="submit" class="btn-link">enable</button>
+          {% endif %}
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  {% if not rows %}
+    <tr><td colspan="9" class="muted">No cards match this filter.</td></tr>
+  {% endif %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

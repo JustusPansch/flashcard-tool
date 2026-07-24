@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Export - script2anki{% endblock %}
+{% block content %}
+<h1>Export deck</h1>
+<p class="muted">Produces a self-contained .apkg with images bundled -- importable into Anki on any device.</p>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form method="post">
+  <label class="field">Deck name <input type="text" name="deck_name" value="script2anki"></label>
+  <label class="field">Language
+    <select name="language">
+      {% for l in languages %}
+        <option value="{{ l }}" {% if l == export_lang %}selected{% endif %}>{{ l|upper }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <div class="type-grid">
+  {% for t in types %}
+    <label class="type-check">
+      <input type="checkbox" name="types" value="{{ t }}" {% if t in active %}checked{% endif %}>
+      {{ t }}
+    </label>
+  {% endfor %}
+  </div>
+  <button type="submit" class="btn btn-primary">Download .apkg</button>
+</form>
+{% endblock %}
